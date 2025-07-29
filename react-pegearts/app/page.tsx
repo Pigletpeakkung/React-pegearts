@@ -1,5 +1,6 @@
- 'use client'
+'use client'
 import { useEffect, useRef, useState } from 'react'
+import AnimationScript from '../components/AnimationScript'
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true)
@@ -14,205 +15,6 @@ export default function Page() {
     }, 2000)
 
     return () => clearTimeout(timer)
-  }, [])
-
-  // Navbar scroll effects
-  useEffect(() => {
-    let lastScrollY = 0
-    
-    const handleScroll = () => {
-      const navbar = document.querySelector('.navbar')
-      const currentScrollY = window.scrollY
-
-      if (navbar) {
-        // Add scrolled class for background effect
-        if (currentScrollY > 50) {
-          navbar.classList.add('scrolled')
-        } else {
-          navbar.classList.remove('scrolled')
-        }
-
-        // Hide/show navbar on scroll
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          navbar.classList.add('hidden')
-        } else {
-          navbar.classList.remove('hidden')
-        }
-      }
-
-      lastScrollY = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Particle Canvas Animation
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-
-    const particles: Array<{
-      x: number
-      y: number
-      vx: number
-      vy: number
-      size: number
-      opacity: number
-    }> = []
-
-    // Create particles
-    for (let i = 0; i < 50; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.3 + 0.1
-      })
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((particle) => {
-        // Update position
-        particle.x += particle.vx
-        particle.y += particle.vy
-
-        // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width
-        if (particle.x > canvas.width) particle.x = 0
-        if (particle.y < 0) particle.y = canvas.height
-        if (particle.y > canvas.height) particle.y = 0
-
-        // Draw particle
-        ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(167, 139, 250, ${particle.opacity})`
-        ctx.fill()
-
-        // Draw connections
-        particles.forEach((otherParticle) => {
-          const dx = particle.x - otherParticle.x
-          const dy = particle.y - otherParticle.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-
-          if (distance < 100) {
-            ctx.beginPath()
-            ctx.moveTo(particle.x, particle.y)
-            ctx.lineTo(otherParticle.x, otherParticle.y)
-            ctx.strokeStyle = `rgba(167, 139, 250, ${0.1 * (1 - distance / 100)})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
-          }
-        })
-      })
-
-      requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  // Typing animation for subtitle
-  useEffect(() => {
-    const subtitle = document.querySelector('.subtitle')
-    if (!subtitle) return
-
-    const text = 'AI Creative Designer & Digital Innovator'
-    let index = 0
-
-    const typeWriter = () => {
-      if (index < text.length) {
-        subtitle.textContent = text.slice(0, index + 1)
-        index++
-        setTimeout(typeWriter, 100)
-      }
-    }
-
-    setTimeout(typeWriter, 1000)
-  }, [])
-
-  // Scroll animations
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible')
-        }
-      })
-    }, observerOptions)
-
-    const fadeElements = document.querySelectorAll('.fade-in')
-    fadeElements.forEach((el) => observer.observe(el))
-
-    return () => observer.disconnect()
-  }, [])
-
-  // Stats counter animation
-  useEffect(() => {
-    const animateCounter = (element: Element, target: number) => {
-      let current = 0
-      const increment = target / 100
-      const timer = setInterval(() => {
-        current += increment
-        if (current >= target) {
-          current = target
-          clearInterval(timer)
-        }
-        element.textContent = Math.floor(current).toString()
-      }, 20)
-    }
-
-    const statNumbers = document.querySelectorAll('[data-count]')
-    const statsObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const target = parseInt(entry.target.getAttribute('data-count') || '0')
-          animateCounter(entry.target, target)
-          statsObserver.unobserve(entry.target)
-        }
-      })
-    })
-
-    statNumbers.forEach((stat) => statsObserver.observe(stat))
-
-    return () => statsObserver.disconnect()
-  }, [])
-
-  // Character floating animation
-  useEffect(() => {
-    const heroTitle = document.querySelector('.hero-title')
-    if (!heroTitle) return
-
-    const text = heroTitle.textContent || ''
-    heroTitle.innerHTML = text
-      .split('')
-      .map((char, index) => 
-        `<span class="char" style="animation-delay: ${index * 0.1}s">${char === ' ' ? '&nbsp;' : char}</span>`
-      )
-      .join('')
   }, [])
 
   // Portfolio filtering
@@ -343,7 +145,7 @@ export default function Page() {
           {/* Hero Content */}
           <div className="hero-content" id="heroContent" ref={heroContentRef}>
             <h1 className="hero-title">Thanatsitt Santisamranwilai</h1>
-            <p className="subtitle"></p>
+            <p className="subtitle">AI Creative Designer & Digital Innovator</p>
             <p className="hero-description">
               Crafting the future of digital experiences through the perfect blend of artificial intelligence, 
               creative vision, and innovative design thinking.
@@ -391,7 +193,7 @@ export default function Page() {
             <div className="about-content fade-in">
               <div className="about-image">
                 <div className="about-image-wrapper">
-                                    <video 
+                  <video 
                     width="500" 
                     height="600" 
                     controls 
@@ -815,7 +617,7 @@ export default function Page() {
                 alert('Thank you for subscribing!')
                 ;(e.target as HTMLFormElement).reset()
               }}>
-                                <input type="email" name="email" placeholder="Your email" className="form-control mb-3" required />
+                <input type="email" name="email" placeholder="Your email" className="form-control mb-3" required />
                 <button type="submit" className="btn btn-primary w-100">Subscribe</button>
               </form>
             </div>
@@ -826,6 +628,9 @@ export default function Page() {
           </div>
         </div>
       </footer>
+
+      {/* Add the animation script at the end */}
+      <AnimationScript />
     </>
   );
-      }
+}

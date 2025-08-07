@@ -7,6 +7,7 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import About from './components/About/About';
+import Portfolio from './components/Portfolio/Portfolio';
 import './App.css';
 
 function App() {
@@ -30,7 +31,8 @@ function App() {
                   <main>
                     <Hero />
                     <About />
-                    {/* More sections will be added here */}
+                    <Portfolio />
+                    {/* Contact section next */}
                   </main>
                 </>
               )}

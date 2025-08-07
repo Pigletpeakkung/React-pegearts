@@ -6,6 +6,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
+import About from './components/About/About';
 import './App.css';
 
 function App() {
@@ -28,7 +29,8 @@ function App() {
                   <Header />
                   <main>
                     <Hero />
-                    {/* Add more sections here later */}
+                    <About />
+                    {/* More sections will be added here */}
                   </main>
                 </>
               )}

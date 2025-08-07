@@ -270,5 +270,141 @@ const Portfolio = () => {
             </AnimatePresence>
           </motion.div>
 
-          {/* Call to Action */}
-          <motion.div variants={item
+                    {/* Call to Action */}
+          <motion.div variants={itemVariants} className="portfolio-cta">
+            <div className="cta-content">
+              <h3>Interested in working together?</h3>
+              <p>I'm always excited to take on new challenges and create something amazing.</p>
+              <motion.a
+                href="#contact"
+                className="cta-button"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span>Let's Start a Project</span>
+                <i className="fas fa-arrow-right"></i>
+              </motion.a>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal 
+            project={selectedProject} 
+            onClose={() => setSelectedProject(null)} 
+          />
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};
+
+// Project Modal Component
+const ProjectModal = ({ project, onClose }) => {
+  return (
+    <motion.div
+      className="modal-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="project-modal"
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 50 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button className="modal-close" onClick={onClose}>
+          <i className="fas fa-times"></i>
+        </button>
+
+        <div className="modal-content">
+          <div className="modal-image">
+            <img src={project.image} alt={project.title} />
+            {project.featured && (
+              <div className="featured-badge">
+                <i className="fas fa-star"></i>
+                Featured
+              </div>
+            )}
+          </div>
+
+          <div className="modal-info">
+            <div className="modal-header">
+              <div className="project-meta">
+                <span className="project-year">{project.year}</span>
+                <span className="project-category">{project.category}</span>
+              </div>
+              <h2>{project.title}</h2>
+            </div>
+
+            <div className="modal-description">
+              <p>{project.description}</p>
+            </div>
+
+            <div className="project-details">
+              <div className="detail-section">
+                <h4>Technologies Used</h4>
+                <div className="project-tags">
+                  {project.tags.map((tag, index) => (
+                    <span key={index} className="project-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {project.metrics && (
+                <div className="detail-section">
+                  <h4>Key Metrics</h4>
+                  <div className="project-metrics">
+                    {Object.entries(project.metrics).map(([key, value]) => (
+                      <div key={key} className="metric-item">
+                        <span className="metric-value">{value}</span>
+                        <span className="metric-label">{key}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              <motion.a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="modal-btn primary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <i className="fas fa-external-link-alt"></i>
+                View Live Demo
+              </motion.a>
+              {project.codeUrl && (
+                <motion.a
+                  href={project.codeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="modal-btn secondary"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <i className="fab fa-github"></i>
+                  View Code
+                </motion.a>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default Portfolio;

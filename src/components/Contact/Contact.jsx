@@ -67,6 +67,70 @@ const Contact = () => {
     }
   ];
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      addNotification('Please fix the errors in the form', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Next.js API route for sending emails
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent
+        }),
+      });
+
+      if (response.ok) {
+        addNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          subject: '',
+          message: '',
+          services: []
+        });
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      // Fallback to mailto
+      const subject = formData.subject || 'New Project Inquiry from Portfolio';
+      const body = `Hello Thanatsitt,
+
+${formData.message}
+
+---
+Contact Details:
+Name: ${formData.name}
+Email: ${formData.email}
+${formData.company ? `Company: ${formData.company}` : ''}
+${formData.services.length > 0 ? `Interested Services: ${formData.services.join(', ')}` : ''}
+
+Best regards,
+${formData.name}`;
+
+      const mailtoUrl = `mailto:thanattsitt.info@yahoo.co.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailtoUrl;
+      
+      addNotification('Email client opened! Message prepared for sending.', 'success');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Rest of component remains the same...
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -97,57 +161,6 @@ const Contact = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      addNotification('Please fix the errors in the form', 'error');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Create mailto link with form data
-      const subject = formData.subject || 'New Project Inquiry from Portfolio';
-      const body = `Hello Thanatsitt,
-
-${formData.message}
-
----
-Contact Details:
-Name: ${formData.name}
-Email: ${formData.email}
-${formData.company ? `Company: ${formData.company}` : ''}
-${formData.services.length > 0 ? `Interested Services: ${formData.services.join(', ')}` : ''}
-
-Best regards,
-${formData.name}`;
-
-      const mailtoUrl = `mailto:thanattsitt.info@yahoo.co.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Open email client
-      window.location.href = mailtoUrl;
-      
-      addNotification('Email client opened! Message prepared for sending.', 'success');
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        subject: '',
-        message: '',
-        services: []
-      });
-    } catch (error) {
-      addNotification('Failed to prepare message. Please try again.', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -168,6 +181,7 @@ ${formData.name}`;
   return (
     <section id="contact" className="contact-section">
       <div className="container">
+        {/* Component JSX remains the same as React version */}
         <motion.div
           ref={ref}
           variants={containerVariants}
@@ -178,7 +192,7 @@ ${formData.name}`;
           <motion.div variants={itemVariants} className="section-header">
             <h2 className="section-title">
               <span className="title-number">03.</span>
-              Let's Work Together
+              Let&apos;s Work Together
             </h2>
             <div className="title-line"></div>
           </motion.div>
@@ -187,8 +201,8 @@ ${formData.name}`;
             <h3>Ready to bring your ideas to life?</h3>
             <p>
               Whether you need AI-powered content development, professional voice acting in Thai/English, 
-              or creative technology solutions, I'm here to help transform your vision into reality. 
-              Let's create something amazing together!
+              or creative technology solutions, I&apos;m here to help transform your vision into reality. 
+              Let&apos;s create something amazing together!
             </p>
           </motion.div>
 
@@ -220,10 +234,11 @@ ${formData.name}`;
               </div>
             </motion.div>
 
-            {/* Contact Form */}
+            {/* Contact Form - same as before */}
             <motion.div variants={itemVariants} className="contact-form-container">
               <h4>Send Me a Message</h4>
               <form onSubmit={handleSubmit} className="contact-form">
+                {/* Form fields remain the same */}
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="name">
@@ -345,7 +360,7 @@ ${formData.name}`;
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         />
-                        Preparing...
+                        Sending...
                       </motion.span>
                     ) : (
                       <motion.span
